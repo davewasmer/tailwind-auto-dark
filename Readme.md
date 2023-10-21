@@ -1,4 +1,4 @@
-# tailwind-contrast-colors
+<h1 align="center">☀️ tailwind-auto-dark 🌒</h1>
 
 This package makes it easy to create a set of Tailwind utilities that will apply both light and dark mode colors to a particular property with a single class.
 
@@ -19,8 +19,8 @@ This is particularly useful if you are relatively consistent with light/dark mod
 ## Installation
 
 ```sh
-$ npm install -D tailwind-contrast-colors
-$ pnpm add -D tailwind-contrast-colors
+$ npm install -D tailwind-auto-dark
+$ pnpm add -D tailwind-auto-dark
 ```
 
 In your `tailwind.config.js` file, add the plugin:
@@ -30,7 +30,7 @@ const config = {
   // ...
   plugins: [
     // Use the default palette
-    require('tailwind-contrast-colors'),
+    require('tailwind-auto-dark'),
 ```
 
 ## Default palette
@@ -62,7 +62,7 @@ You can customize the generated contrasting colors:
 
 ```js
     // Or, supply your own as an array of config objects
-    require('tailwind-contrast-colors')((theme) => [
+    require('tailwind-auto-dark')((theme) => [
       // This will generate `text-foo-weak`
       {
         cssName: "color",
