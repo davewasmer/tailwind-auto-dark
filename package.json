@@ -11,8 +11,7 @@
   "scripts": {
     "build": "pnpm run clean && rollup -c",
     "clean": "rm -rf dist",
-    "prepare": "husky install",
-    "semantic-release": "semantic-release"
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "Dave Wasmer",
