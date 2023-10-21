@@ -1,12 +1,12 @@
 {
-  "name": "tailwind-contrast-colors",
+  "name": "tailwind-auto-dark",
   "version": "0.0.0-development",
   "description": "A Tailwind CSS plugin that generates utility classes to apply light and dark mode colors in a single class.",
   "main": "dist/index.js",
   "module": "dist/index-esm.mjs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/davewasmer/tailwind-contrast-colors.git"
+    "url": "https://github.com/davewasmer/tailwind-auto-dark.git"
   },
   "scripts": {
     "build": "pnpm run clean && rollup -c",
