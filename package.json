@@ -21,7 +21,6 @@
     "@commitlint/config-conventional": "^18.0.0",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.5",
     "@types/color": "^3.0.5",
     "@types/node": "^20.8.7",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
@@ -30,6 +29,7 @@
     "husky": "^8.0.0",
     "prettier": "^3.0.3",
     "rollup": "^4.1.4",
+    "rollup-plugin-ts": "^3.4.5",
     "semantic-release": "^22.0.5",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
