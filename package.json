@@ -1,0 +1,42 @@
+{
+  "name": "tailwind-contrast-colors",
+  "version": "0.0.0-development",
+  "description": "A Tailwind CSS plugin that generates utility classes to apply light and dark mode colors in a single class.",
+  "main": "dist/index.js",
+  "module": "dist/index-esm.mjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davewasmer/tailwind-contrast-colors.git"
+  },
+  "scripts": {
+    "build": "pnpm run clean && rollup -c",
+    "clean": "rm -rf dist",
+    "prepare": "husky install",
+    "semantic-release": "semantic-release"
+  },
+  "keywords": [],
+  "author": "Dave Wasmer",
+  "license": "ISC",
+  "devDependencies": {
+    "@commitlint/cli": "^18.0.0",
+    "@commitlint/config-conventional": "^18.0.0",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/color": "^3.0.5",
+    "@types/node": "^20.8.7",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "eslint": "^8.52.0",
+    "husky": "^8.0.0",
+    "prettier": "^3.0.3",
+    "rollup": "^4.1.4",
+    "semantic-release": "^22.0.5",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "color": "^4.2.3",
+    "tailwindcss": "^3.3.3"
+  }
+}
