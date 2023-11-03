@@ -6,3 +6,5 @@ pnpm-lock.yaml
 rollup.config.mjs
 src
 tsconfig.json
+.husky
+commitlint.config.js
