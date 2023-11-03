@@ -20,12 +20,7 @@ export default function shadesFactory(
         ([contrastShadeNumber, [lightMode, darkMode]]) => {
           colorUtilities[
             `.${tailwindName}-${outputName}-${contrastShadeNumber}`
-          ] = contrastProperty(
-            cssName,
-            contrastShadeNumber,
-            lightMode,
-            darkMode,
-          );
+          ] = contrastProperty(cssName, tailwindName, lightMode, darkMode);
         },
       );
       addUtilities(colorUtilities);
