@@ -20,15 +20,15 @@ export function defaultBackgroundShades(shades: Record<number, string>) {
   return {
     "0": [colors.white, shades[900]],
     "50": [shades[50], shades[800]],
-    "100": [shades[200], shades[800]],
-    "200": [shades[300], shades[700]],
-    "300": [shades[400], shades[600]],
-    "400": [shades[400], shades[500]],
-    "500": [shades[500], shades[400]],
-    "600": [shades[600], shades[300]],
-    "700": [shades[700], shades[200]],
-    "800": [shades[800], shades[100]],
-    "900": [shades[900], shades[50]],
+    "100": [shades[200], shades[700]],
+    "200": [shades[300], shades[600]],
+    "300": [shades[400], shades[500]],
+    "400": [shades[400], shades[400]],
+    "500": [shades[500], shades[300]],
+    "600": [shades[600], shades[200]],
+    "700": [shades[700], shades[100]],
+    "800": [shades[800], shades[50]],
+    "900": [shades[900], colors.white],
   } satisfies Record<string, [string, string]>;
 }
 
