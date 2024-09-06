@@ -89,7 +89,7 @@ const tailwindToCssProperty = {
   bg: "background-color",
   border: "border-color",
   text: "color",
-  ring: "color",
+  ring: "--tw-ring-color",
   decoration: "text-decoration-color",
   caret: "caret-color",
   "border-t": "border-top-color",
@@ -99,6 +99,7 @@ const tailwindToCssProperty = {
   outline: "outline-color",
   fill: "fill",
   stroke: "stroke",
+  shadow: "--tw-shadow-color",
 };
 
 export type SupportedProperty = keyof typeof tailwindToCssProperty;
