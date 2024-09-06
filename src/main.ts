@@ -3,8 +3,6 @@ import Color from "color";
 import { type Config } from "tailwindcss";
 import { background, foreground } from "./default-palette";
 
-export type SupportedProperty = "text" | "bg" | "border" | "ring";
-
 export type ShadeConfig = {
   /** The name of the color in your theme to use as the reference color for any relative shades in your shade mapping */
   themeColor: string;
@@ -87,12 +85,23 @@ function shadeUtilitiesForProperty(
 }
 
 // Maps tailwind property names to their corresponding CSS property names
-const tailwindToCssProperty: Record<SupportedProperty, string> = {
+const tailwindToCssProperty = {
   bg: "background-color",
   border: "border-color",
   text: "color",
   ring: "color",
+  decoration: "text-decoration-color",
+  caret: "caret-color",
+  "border-t": "border-top-color",
+  "border-r": "border-right-color",
+  "border-b": "border-bottom-color",
+  "border-l": "border-left-color",
+  outline: "outline-color",
+  fill: "fill",
+  stroke: "stroke",
 };
+
+export type SupportedProperty = keyof typeof tailwindToCssProperty;
 
 const tailwindPropertyToOpacityVariable: { [P in SupportedProperty]?: string } =
   {
