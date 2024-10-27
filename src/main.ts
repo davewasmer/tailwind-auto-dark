@@ -1,161 +1,97 @@
 import plugin from "tailwindcss/plugin";
 import Color from "color";
-import { type Config } from "tailwindcss";
-import { background, foreground } from "./default-palette";
 
-export type ShadeConfig = {
-  /** The name of the color in your theme to use as the reference color for any relative shades in your shade mapping */
-  themeColor: string;
-  /** Optionally override the utility class names generated, i.e. outputName: "foo" -> .text-foo-300. If not supplied, defaults to `${themeColor}-contrast` */
-  outputName?: string;
-  /** Which Tailwind properties should these be generated for? */
-  properties: SupportedProperty[];
-  /** Mapping of shade level to light and dark values */
-  shadeMapping: ShadeMapping;
-};
-
-export type ShadeMapping = Record<string, [string | number, string | number]>;
-export type ResolvedShadeMapping = Record<string, [string, string]>;
-
-export type Theme = <TDefaultValue = Config["theme"]>(
-  path?: string,
-  defaultValue?: TDefaultValue,
-) => TDefaultValue;
-
-export default function shadesFactory(configs: ShadeConfig[]) {
-  if (!configs.some((c) => c.themeColor === "gray")) {
-    configs.push({
-      themeColor: "gray",
-      outputName: "contrast",
-      properties: ["bg", "border", "ring"],
-      shadeMapping: background,
-    });
-    configs.push({
-      themeColor: "gray",
-      outputName: "contrast",
-      properties: ["text"],
-      shadeMapping: foreground,
-    });
-  }
-
+export default function shadesFactory() {
   return plugin(({ addUtilities, theme }) => {
-    configs.forEach(({ themeColor, outputName, properties, shadeMapping }) => {
-      const resolvedShadeMapping = resolveShadeMapping(
-        theme,
-        themeColor,
-        shadeMapping,
-      );
-      properties.forEach((property) => {
-        addUtilities(
-          shadeUtilitiesForProperty(
-            property,
-            outputName,
-            themeColor,
-            resolvedShadeMapping,
-          ),
-        );
-      });
-    });
+    const colors = theme("colors") as Record<
+      string,
+      string | Record<string, string>
+    >;
+    if (!colors) return;
+    const utilities: Record<
+      string,
+      Record<string, string | Record<string, string>>
+    > = {};
+    for (const [colorName, shadesMap] of Object.entries(colors)) {
+      // Skip single color values - colors without shades can't be inverted
+      // automatically
+      if (typeof shadesMap === "string") continue;
+      for (const [tailwindUtilityName, cssProperties] of Object.entries(
+        TailwindToCss,
+      )) {
+        for (const [shadeName, shadeValue] of Object.entries(shadesMap)) {
+          utilities[
+            `.${tailwindUtilityName}-contrast-${colorName}-${shadeName}`
+          ] = {
+            ...cssProperties(shadeValue),
+            "@media (prefers-color-scheme: dark)": {
+              ...cssProperties(invert(shadesMap, shadeValue)),
+            },
+          };
+        }
+      }
+    }
+    addUtilities(utilities);
   });
 }
 
-// Takes a tailwind property (i.e. "bg"), a base theme color name (i.e. "blue"),
-// and a mapping of each standard shade number to a light and dark color value.
-// Returns an object that can be passed into addUtilities.
-function shadeUtilitiesForProperty(
-  tailwindProperty: SupportedProperty,
-  outputName: string | undefined,
-  themeColor: string,
-  resolvedShadeMapping: ResolvedShadeMapping,
-) {
-  return Object.entries(resolvedShadeMapping).reduce(
-    (utilities, [shade, [lightColor, darkColor]]) => {
-      const exportedClassName = `.${tailwindProperty}-${
-        outputName ?? themeColor + "-contrast"
-      }-${shade}`;
-      utilities[exportedClassName] = generateUtilityClass(
-        tailwindProperty,
-        lightColor,
-        darkColor,
-      );
-      return utilities;
-    },
-    {} as Record<string, Record<string, string | Record<string, string>>>,
+function invert(shadesMap: Record<string, string>, shadeValue: string) {
+  const shades = Object.entries(shadesMap).sort(
+    ([shadeNameA], [shadeNameB]) => Number(shadeNameB) - Number(shadeNameA),
   );
+  const index = shades.findIndex(([, value]) => value === shadeValue);
+  if (index === -1) {
+    throw new Error(`Shade ${shadeValue} not found in shadesMap`);
+  }
+  return shades[shades.length - index - 1][1];
+}
+
+function rgb(value: string) {
+  return new Color(value).rgb().array().join(" ");
 }
 
 // Maps tailwind property names to their corresponding CSS property names
-const tailwindToCssProperty = {
-  bg: "background-color",
-  border: "border-color",
-  text: "color",
-  ring: "--tw-ring-color",
-  decoration: "text-decoration-color",
-  caret: "caret-color",
-  "border-t": "border-top-color",
-  "border-r": "border-right-color",
-  "border-b": "border-bottom-color",
-  "border-l": "border-left-color",
-  outline: "outline-color",
-  fill: "fill",
-  stroke: "stroke",
-  shadow: "--tw-shadow-color",
-};
-
-export type SupportedProperty = keyof typeof tailwindToCssProperty;
-
-const tailwindPropertyToOpacityVariable: { [P in SupportedProperty]?: string } =
+const TailwindToCss: Record<string, (value: string) => Record<string, string>> =
   {
-    bg: "bg",
-    border: "border",
-    text: "text",
+    bg: (value) => ({
+      "--tw-bg-opacity": "1",
+      "background-color": `rgba(${rgb(value)} / var(--tw-bg-opacity))`,
+    }),
+    border: (value) => ({
+      "--tw-border-opacity": "1",
+      "border-color": `rgba(${rgb(value)} / var(--tw-border-opacity))`,
+    }),
+    "border-t": (value) => ({
+      "--tw-border-opacity": "1",
+      "border-top-color": `rgba(${rgb(value)} / var(--tw-border-opacity))`,
+    }),
+    "border-r": (value) => ({
+      "--tw-border-opacity": "1",
+      "border-right-color": `rgba(${rgb(value)} / var(--tw-border-opacity))`,
+    }),
+    "border-b": (value) => ({
+      "--tw-border-opacity": "1",
+      "border-bottom-color": `rgba(${rgb(value)} / var(--tw-border-opacity))`,
+    }),
+    "border-l": (value) => ({
+      "--tw-border-opacity": "1",
+      "border-left-color": `rgba(${rgb(value)} / var(--tw-border-opacity))`,
+    }),
+    text: (value) => ({
+      "--tw-text-opacity": "1",
+      color: `rgba(${rgb(value)} / var(--tw-text-opacity))`,
+    }),
+    outline: (value) => ({ "outline-color": value }),
+    decoration: (value) => ({ "text-decoration-color": value }),
+    caret: (value) => ({ "caret-color": value }),
+    fill: (value) => ({ fill: value }),
+    stroke: (value) => ({ stroke: value }),
+    shadow: (value) => ({
+      "--tw-shadow": "var(--tw-shadow-colored)",
+      "--tw-shadow-color": value,
+    }),
+    ring: (value) => ({
+      "--tw-ring-opacity": "1",
+      "--tw-ring-color": `rgba(${rgb(value)} / var(--tw-ring-opacity))`,
+    }),
   };
-
-// Takes a tailwind property (i.e. "bg"), a light color value, and a dark color,
-// and returns the body of the CSS definition for the contrast-aware utility class.
-function generateUtilityClass(
-  tailwindProperty: SupportedProperty,
-  lightColor: string,
-  darkColor: string,
-): Record<string, string | Record<string, string>> {
-  const cssProperty = tailwindToCssProperty[tailwindProperty];
-  const tailwindOpacityVariable =
-    tailwindPropertyToOpacityVariable[tailwindProperty];
-  return {
-    [cssProperty]: colorValue(lightColor, tailwindOpacityVariable),
-    "@media (prefers-color-scheme: dark)": {
-      [cssProperty]: colorValue(darkColor, tailwindOpacityVariable),
-    },
-  };
-}
-
-// Print the color value as rgb, including an optional opacity variable
-function colorValue(hex: string, opacityVariable?: string) {
-  const rgb = new Color(hex).rgb().array().join(" ");
-  if (opacityVariable) {
-    return `rgba(${rgb} / var(--tw-${opacityVariable}-opacity))`;
-  }
-  return `rgb(${rgb})`;
-}
-
-// Shade mappings (i.e. the light and dark colors to use for each shade level)
-// can be specified as numbers (indicating the shade of the base color to use)
-// or as a string (indicating a direct color value to use). This method converts
-// any of those shade number references to their underlying actual color values
-// (i.e. 900 -> "#333333")
-function resolveShadeMapping(
-  theme: Theme,
-  themeColor: string,
-  shadeMapping: ShadeConfig["shadeMapping"],
-) {
-  const resolvedShadeMapping: ResolvedShadeMapping = {};
-  Object.entries(shadeMapping).forEach(([shade, [light, dark]]) => {
-    resolvedShadeMapping[shade] = [
-      typeof light === "number"
-        ? theme(`colors.${themeColor}.${light}`)
-        : light,
-      typeof dark === "number" ? theme(`colors.${themeColor}.${dark}`) : dark,
-    ];
-  });
-  return resolvedShadeMapping;
-}
